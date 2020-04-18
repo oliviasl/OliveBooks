@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Welcome
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" type="text/css" href="static/styles/index.css">
+{% endblock %}
+
+{% block body %}
+    <div class="container" id="header">
+        <h1>Olive Books</h1>
+    </div>
+
+    <div class="container" id="body">
+        <p>Provides information on book reviews.</p>
+        <p>Book API based on Goodreads.</p>
+
+        <form action="{{ url_for('register') }}">
+            <div class="form-group">
+                <button class="btn btn-primary">Register</button>
+            </div>
+        </form>
+
+        <form action="{{ url_for('login') }}">
+            <div class="form-group">
+                <button class="btn btn-primary">Login</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

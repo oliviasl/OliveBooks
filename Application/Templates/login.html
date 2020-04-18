@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" type="text/css" href="static/styles/index.css">
+{% endblock %}
+
+{% block body %}
+    <div class="container" id="header">
+        <h1>Login</h1>
+    </div>
+
+    <div class="container" id="body">
+        <form action="{{ url_for('trylogin') }}" method="POST">
+            <div class="form-group">
+                <label>Username</label>
+                <input class="form-control" type="text" name="username" placeholder="username">
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input class="form-control" type="password" name="password" placeholder="password">
+            </div>
+
+            <br>
+
+            <button class="btn btn-primary">Login</button>
+        </form>
+
+        <br>
+
+        {% if message != "" %}
+            <div class="alert alert-warning" role="alert">
+                {{ message }}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
