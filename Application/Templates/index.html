@@ -10,23 +10,35 @@
 
 {% block body %}
     <div class="container" id="header">
-        <h1>Olive Books</h1>
+        <div class="row">
+            <div class="col-xl-9 col-lg-8 col-md-8 col-sm-6">
+                <h1>Olive Books</h1>
+            </div>
+            <div class="col-xl-1 col-lg-2 col-md-2 col-sm-3">
+              <form action="{{ url_for('register') }}">
+                  <div class="form-group">
+                      <button class="btn btn-info">Register</button>
+                  </div>
+              </form>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3">
+                <form action="{{ url_for('login') }}">
+                    <div class="form-group">
+                        <button class="btn btn-info">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <div class="container" id="body">
-        <p>Provides information on book reviews.</p>
-        <p>Book API based on Goodreads.</p>
-
-        <form action="{{ url_for('register') }}">
-            <div class="form-group">
-                <button class="btn btn-primary">Register</button>
+        <div class="row">
+            <div class="col-12">
+                <p>Provides information on book reviews.</p>
             </div>
-        </form>
-
-        <form action="{{ url_for('login') }}">
-            <div class="form-group">
-                <button class="btn btn-primary">Login</button>
+            <div class="col-12">
+                <p>Book API based on Goodreads.</p>
             </div>
-        </form>
+        </div>
     </div>
 {% endblock %}

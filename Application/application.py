@@ -1,4 +1,5 @@
 import os
+import requests
 
 from flask import Flask, session, render_template, request, redirect, url_for
 from flask_session import Session
@@ -15,6 +16,7 @@ Session(app)
 class DataStore():
     login_error_message = ""
     register_error_message = ""
+    user = None;
 
 data = DataStore()
 
@@ -29,6 +31,7 @@ def index():
     # Reset login and register page
     data.login_error_message = ""
     data.register_error_message = ""
+    data.user = None
 
     return render_template("index.html")
 
@@ -66,7 +69,9 @@ def tryregister():
                 {"username": username, "password": password})
     db.commit()
 
-    return redirect(url_for('index'))
+    data.user = db.execute("SELECT * FROM users WHERE username = :username",
+                            {"username": username}).fetchone()
+    return redirect(url_for('search'))
 
 @app.route("/login")
 def login():
@@ -90,4 +95,75 @@ def trylogin():
         data.login_error_message = "Incorrect username or password."
         return redirect(url_for('login'))
 
-    return redirect(url_for('index'))
+    data.user = db.execute("SELECT * FROM users WHERE username = :username",
+                            {"username": username}).fetchone()
+    return redirect(url_for('search'))
+
+@app.route("/search", methods=["GET", "POST"])
+def search():
+
+    if request.method == 'POST':
+        searchinfo = request.form.get("searchinfo")
+        newsearch = '%' + searchinfo + '%'
+        searchby = request.form.get("searchby")
+
+        if searchby == "ISBN":
+            booksfound = db.execute("SELECT * FROM books WHERE ISBN LIKE :searchinfo",
+                                    {"searchinfo": newsearch}).fetchall()
+        elif searchby == "title":
+            booksfound = db.execute("SELECT * FROM books WHERE title LIKE :searchinfo",
+                                    {"searchinfo": newsearch}).fetchall()
+        elif searchby == "author":
+            booksfound = db.execute("SELECT * FROM books WHERE author LIKE :searchinfo",
+                                    {"searchinfo": newsearch}).fetchall()
+        else:
+            booksfound = []
+
+        return render_template("search.html", searchinfo=searchinfo, searchby=searchby, booksfound=booksfound, username=data.user.username)
+
+    return render_template("search.html", searchinfo="", searchby="", booksfound=[], username=data.user.username)
+
+
+@app.route("/book/<int:book_id>", methods=["GET", "POST"])
+def book(book_id):
+
+    book = db.execute("SELECT * FROM books WHERE id = :id",
+                        {"id": book_id}).fetchone()
+
+    # Check book exists
+    if book is None:
+        return render_template("error.html", message="No such book exists.")
+
+    # Get API book information
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "CP5fhQDJPfEjhox0sGg", "isbns": book.isbn})
+    if res.status_code != 200:
+        raise Exception("API request unsuccessful.")
+    book_data = res.json()
+    total_ratings = book_data["books"][0]["work_ratings_count"]
+    average_rating = book_data["books"][0]["average_rating"]
+
+    # Check if review exists
+    review = db.execute("SELECT * FROM reviews WHERE user_id = :user_id and book_id = :book_id",
+                        {"user_id": data.user.id, "book_id": book_id}).fetchone()
+    if review == None:
+        return render_template("book.html", book=book, total_ratings=total_ratings, average_rating=average_rating, rating=None, review=None, username=data.user.username)
+
+    return render_template("book.html", book=book, total_ratings=total_ratings, average_rating=average_rating, rating=review.rating, review=review.review, username=data.user.username)
+
+
+@app.route("/processreview", methods=["POST"])
+def processreview():
+
+    # Get rating and review
+    rating = request.form.get("rating")
+    review = request.form.get("review")
+    book_id = request.form.get("book_id")
+
+    print(book_id)
+
+    # Add review to reviews database
+    db.execute("INSERT INTO reviews (rating, review, user_id, book_id) VALUES (:rating, :review, :user_id, :book_id)",
+                {"rating": rating, "review": review, "user_id": data.user.id, "book_id": book_id})
+    db.commit()
+
+    return redirect(url_for('book', book_id=book_id))

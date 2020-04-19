@@ -1,6 +1,10 @@
-.container {
+.container, .row {
     padding: 20px;
     margin-top: 10px;
+}
+
+.card {
+    margin: 5px;
 }
 
 #header {
@@ -8,5 +12,9 @@
 }
 
 #body {
+    background-color: #ebfffa;
+}
+
+#submission {
     background-color: #ebfffa;
 }
