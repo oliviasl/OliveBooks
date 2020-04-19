@@ -105,6 +105,11 @@ def trylogin():
 @app.route("/search", methods=["GET", "POST"])
 def search():
 
+    if not "username" in session.keys():
+        session['username'] = None;
+    if session['username'] == None:
+        return redirect(url_for('index'))
+
     if request.method == 'POST':
         searchinfo = request.form.get("searchinfo")
         newsearch = '%' + searchinfo + '%'
@@ -129,6 +134,11 @@ def search():
 
 @app.route("/book/<int:book_id>", methods=["GET", "POST"])
 def book(book_id):
+
+    if not "username" in session.keys():
+        session['username'] = None;
+    if session['username'] == None:
+        return redirect(url_for('index'))
 
     book = db.execute("SELECT * FROM books WHERE id = :id",
                         {"id": book_id}).fetchone()
