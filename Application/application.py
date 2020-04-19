@@ -20,6 +20,7 @@ class DataStore():
 
 data = DataStore()
 
+
 # Set up database
 engine = create_engine("postgres://yuvuibqookjtqw:d8408c98770f17233db882e8ccaf5d54146b31746f499f76123ce4815b1092a2@ec2-34-233-186-251.compute-1.amazonaws.com:5432/d5su2kprfclm6j")
 db = scoped_session(sessionmaker(bind=engine))
@@ -31,7 +32,7 @@ def index():
     # Reset login and register page
     data.login_error_message = ""
     data.register_error_message = ""
-    data.user = None
+    session.pop('username', None)
 
     return render_template("index.html")
 
@@ -71,6 +72,7 @@ def tryregister():
 
     data.user = db.execute("SELECT * FROM users WHERE username = :username",
                             {"username": username}).fetchone()
+    session['username'] = username
     return redirect(url_for('search'))
 
 @app.route("/login")
@@ -97,6 +99,7 @@ def trylogin():
 
     data.user = db.execute("SELECT * FROM users WHERE username = :username",
                             {"username": username}).fetchone()
+    session['username'] = username
     return redirect(url_for('search'))
 
 @app.route("/search", methods=["GET", "POST"])
@@ -119,9 +122,9 @@ def search():
         else:
             booksfound = []
 
-        return render_template("search.html", searchinfo=searchinfo, searchby=searchby, booksfound=booksfound, username=data.user.username)
+        return render_template("search.html", searchinfo=searchinfo, searchby=searchby, booksfound=booksfound, username=session['username'])
 
-    return render_template("search.html", searchinfo="", searchby="", booksfound=[], username=data.user.username)
+    return render_template("search.html", searchinfo="", searchby="", booksfound=[], username=session['username'])
 
 
 @app.route("/book/<int:book_id>", methods=["GET", "POST"])
@@ -142,13 +145,22 @@ def book(book_id):
     total_ratings = book_data["books"][0]["work_ratings_count"]
     average_rating = book_data["books"][0]["average_rating"]
 
+    # List of reviews
+    reviewslist = db.execute("SELECT * FROM reviews WHERE book_id = :id",
+                        {"id": book_id}).fetchall()
+    usernameslist = []
+    for post in reviewslist:
+        user = db.execute("SELECT username FROM users WHERE id = :id",
+                        {"id": post.user_id}).fetchone()
+        usernameslist.append(user)
+
     # Check if review exists
     review = db.execute("SELECT * FROM reviews WHERE user_id = :user_id and book_id = :book_id",
                         {"user_id": data.user.id, "book_id": book_id}).fetchone()
     if review == None:
-        return render_template("book.html", book=book, total_ratings=total_ratings, average_rating=average_rating, rating=None, review=None, username=data.user.username)
+        return render_template("book.html", book=book, total_ratings=total_ratings, average_rating=average_rating, rating=None, review=None, username=session['username'], reviewslist=reviewslist, usernameslist=usernameslist)
 
-    return render_template("book.html", book=book, total_ratings=total_ratings, average_rating=average_rating, rating=review.rating, review=review.review, username=data.user.username)
+    return render_template("book.html", book=book, total_ratings=total_ratings, average_rating=average_rating, rating=review.rating, review=review.review, username=session['username'], reviewslist=reviewslist, usernameslist=usernameslist)
 
 
 @app.route("/processreview", methods=["POST"])

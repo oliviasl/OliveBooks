@@ -73,5 +73,20 @@
     </div>
     {% endif %}
 
+    <div class="container" id="body">
+            <h3>Reviews</h3>
+            {% if reviewslist == None %}
+                <p>No reviews available.</p>
+
+            {% else %}
+                {% for i in range(reviewslist | length) %}
+                    <h6>User: {{ usernameslist[i].username }}</h6>
+                    <h6>Rating: {{ reviewslist[i].rating }}</h6>
+                    <p>Review: {{ reviewslist[i].review }}</p>
+                    <br>
+                {% endfor %}
+            {% endif  %}
+    </div>
+
 
 {% endblock %}

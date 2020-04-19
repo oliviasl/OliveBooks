@@ -74,5 +74,9 @@
             </div>
             {% endfor %}
         </div>
+
+        {% if booksfound | length == 0 %}
+            <p>No results found.</p>
+        {% endif %}
     </div>
 {% endblock %}
