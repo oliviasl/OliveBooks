@@ -15,7 +15,7 @@ Follows the JSON format:
 }
 
 ### Software Used:
-* PSQL database on Heroku
+* PostgreSQL database hosted on Heroku
 * Flask and flask sessions
 * SQLAlchemy
 * Bootstrap 4
