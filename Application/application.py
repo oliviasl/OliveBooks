@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import Flask, session, render_template, request, redirect, url_for
+from flask import Flask, session, render_template, request, redirect, url_for, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -135,7 +135,7 @@ def book(book_id):
 
     # Check book exists
     if book is None:
-        return render_template("error.html", message="No such book exists.")
+        return render_template("error.html", message="No such book exists.", username=session['username'])
 
     # Get API book information
     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "CP5fhQDJPfEjhox0sGg", "isbns": book.isbn})
@@ -179,3 +179,30 @@ def processreview():
     db.commit()
 
     return redirect(url_for('book', book_id=book_id))
+
+
+@app.route("/api/<isbn>")
+def book_api(isbn):
+    """Return details about a single book"""
+
+    # Make sure book exists
+    book = db.execute("SELECT * FROM books WHERE isbn = :isbn",
+                        {"isbn": isbn}).fetchone()
+    if book == None:
+        return jsonify({"error": "Invalid ISBN"}), 404
+
+    # Return book information
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "CP5fhQDJPfEjhox0sGg", "isbns": book.isbn})
+    if res.status_code != 200:
+        raise Exception("API request unsuccessful.")
+    book_data = res.json()
+    review_count = book_data["books"][0]["work_ratings_count"]
+    average_rating = book_data["books"][0]["average_rating"]
+    return jsonify({
+                    "title": book.title,
+                    "author": book.author,
+                    "year": book.year,
+                    "isbn": book.isbn,
+                    "review_count": review_count,
+                    "average_score": average_rating
+                    })

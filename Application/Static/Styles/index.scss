@@ -7,6 +7,17 @@
     margin: 5px;
 }
 
+.bordered {
+    border: 10px solid white;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 75%;
+}
+
 #header {
     background-color: #0dceda;
 }
@@ -17,4 +28,8 @@
 
 #submission {
     background-color: #ebfffa;
+}
+
+h4 {
+    text-align: center;
 }

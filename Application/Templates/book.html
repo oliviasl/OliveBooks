@@ -11,29 +11,30 @@
 {% block body %}
 <div class="container" id="header">
     <div class="row">
-        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-6">
+        <div class="col-5">
             <h1>Olive Books</h1>
         </div>
-        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3">
-            <p></p>
+        <div class="col-3">
+            <p>Current user: {{ username }}</p>
+        </div>
+        <div class="col-2">
             <form action="{{ url_for('search') }}">
                 <div class="form-group">
                     <button class="btn btn-light btn-lg">Search</button>
                 </div>
             </form>
         </div>
-        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3">
-            <p>{{ username }}</p>
+        <div class="col-2">
             <form action="{{ url_for('index') }}">
                 <div class="form-group">
-                    <button class="btn btn-info">Logout</button>
+                    <button class="btn btn-info btn-lg">Logout</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-    <div class="container" id="body">
+    <div class="container bordered" id="body">
             <h3>{{ book.title }}</h3>
             <h6>Author: {{ book.author }}</h6>
             <h6>ISBN: {{ book.isbn }}</h6>
@@ -42,7 +43,7 @@
     </div>
 
     {% if rating == None %}
-    <div class="container" id="submission">
+    <div class="container bordered" id="submission">
         <form class="" action="{{ url_for('processreview')}}" method="post">
             <h3>Submit a Review</h3>
             <div class="input-group mb-3">
@@ -66,18 +67,17 @@
         </form>
     </div>
     {% else %}
-    <div class="container" id="submission">
+    <div class="container bordered" id="submission">
         <h3>Your Review</h3>
         <p>Rating: {{ rating }}</p>
         <p>Review: {{ review }}</p>
     </div>
     {% endif %}
 
-    <div class="container" id="body">
+    <div class="container bordered" id="body">
             <h3>Reviews</h3>
-            {% if reviewslist == None %}
+            {% if reviewslist == [] %}
                 <p>No reviews available.</p>
-
             {% else %}
                 {% for i in range(reviewslist | length) %}
                     <h6>User: {{ usernameslist[i].username }}</h6>

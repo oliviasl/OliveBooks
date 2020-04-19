@@ -11,34 +11,34 @@
 {% block body %}
     <div class="container" id="header">
         <div class="row">
-            <div class="col-xl-9 col-lg-8 col-md-8 col-sm-6">
+            <div class="col-7">
                 <h1>Olive Books</h1>
             </div>
-            <div class="col-xl-1 col-lg-2 col-md-2 col-sm-3">
+            <div class="col-3">
               <form action="{{ url_for('register') }}">
                   <div class="form-group">
-                      <button class="btn btn-info">Register</button>
+                      <button class="btn btn-info btn-lg">Register</button>
                   </div>
               </form>
             </div>
-            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3">
+            <div class="col-2">
                 <form action="{{ url_for('login') }}">
                     <div class="form-group">
-                        <button class="btn btn-info">Login</button>
+                        <button class="btn btn-info btn-lg">Login</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="container" id="body">
+    <div class="container bordered" id="body">
         <div class="row">
             <div class="col-12">
-                <p>Provides information on book reviews.</p>
+                <h4>Read and post reviews on books! Uses rating information from Goodreads!</h4>
             </div>
-            <div class="col-12">
-                <p>Book API based on Goodreads.</p>
-            </div>
+        </div>
+        <div class="row">
+            <img class="center" src="{{url_for('static', filename='ReadingTree.jpg')}}">
         </div>
     </div>
 {% endblock %}

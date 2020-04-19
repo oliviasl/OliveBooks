@@ -10,10 +10,12 @@
 
 {% block body %}
     <div class="container" id="header">
-        <h1>Register</h1>
+        <div class="row">
+            <h1>Register</h1>
+        </div>
     </div>
 
-    <div class="container" id="body">
+    <div class="container bordered" id="body">
         <form action="{{ url_for('tryregister') }}" method="POST">
             <div class="form-group">
                 <label>Username</label>
@@ -32,7 +34,7 @@
 
             <br>
 
-            <button class="btn btn-primary">Register</button>
+            <button class="btn btn-primary btn-lg">Register</button>
         </form>
 
         <br>
