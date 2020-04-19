@@ -35,7 +35,7 @@ export FLASK_APP=application.py
 <br>
 export FLASK_ENV=development
 
-### Note
+### Note:
 Application folder holds the actual website.
 <br>
 Import folder holds code for importing book information into PSQL database from a csv file.
