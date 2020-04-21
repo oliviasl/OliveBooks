@@ -2,7 +2,7 @@
 A book review website that allows users to view book reviews and post their own reviews. Uses the Goodreads API for information on a wider range of users.
 
 ### API Usage
-Acts as an api that can be accessed with the url: /api/<isbn>
+Acts as an api that can be accessed with the url: "/api/<isbn>"
 <br>
 Follows the JSON format:
 {
