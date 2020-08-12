@@ -34,6 +34,8 @@ Follows the JSON format:
 export FLASK_APP=application.py
 <br>
 export FLASK_ENV=development
+<br>
+flask run
 
 ### Note:
 Application folder holds the actual website.
